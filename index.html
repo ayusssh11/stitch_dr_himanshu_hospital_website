@@ -13,6 +13,14 @@
 <script>
     tailwind.config = {
       theme: {
+        screens: {
+          'xs': '380px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
         extend: {
           colors: {
             brand: {
@@ -33,10 +41,10 @@
       }
     }
   </script>
-<!-- Custom CSS for subtle aesthetic details mirroring reference layout -->
+<!-- Custom CSS for mobile ergonomics, iOS Safari zoom fix, safe areas, and subtle aesthetic details -->
 <style data-purpose="custom-styling">
     .hero-gradient-overlay {
-      background: linear-gradient(90deg, rgba(7, 24, 40, 0.92) 0%, rgba(11, 34, 56, 0.85) 45%, rgba(0, 131, 143, 0.4) 100%);
+      background: linear-gradient(90deg, rgba(7, 24, 40, 0.94) 0%, rgba(11, 34, 56, 0.88) 45%, rgba(0, 131, 143, 0.45) 100%);
     }
     .badge-shadow {
       box-shadow: 0 10px 25px -5px rgba(0, 131, 143, 0.3);
@@ -48,12 +56,28 @@
       background-color: #cbd5e1;
       border-radius: 4px;
     }
+    /* Stop iOS Safari automatic screen zooming on input focus */
+    @media screen and (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+    /* Safe Area insets for iPhone notched devices */
+    .safe-pb {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    .safe-pt {
+      padding-top: max(0.5rem, env(safe-area-inset-top));
+    }
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
   </style>
 </head>
-<body class="font-sans text-slate-700 bg-slate-50 antialiased overflow-x-hidden selection:bg-brand-teal selection:text-white">
-<!-- BEGIN: FloatingQuickActions -->
-<!-- Left-docked floating contact helpers matching high-conversion hospital UX -->
-<aside class="fixed left-3 bottom-8 z-50 flex flex-col gap-3" data-purpose="floating-contact-dock">
+<body class="font-sans text-slate-700 bg-slate-50 antialiased overflow-x-hidden selection:bg-brand-teal selection:text-white pb-20 md:pb-0">
+<!-- BEGIN: FloatingQuickActions (Desktop Dock) -->
+<!-- Left-docked floating contact helpers for tablet/desktop -->
+<aside class="hidden md:flex fixed left-3 bottom-8 z-50 flex-col gap-3" data-purpose="floating-contact-dock">
 <a class="w-12 h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110" href="https://wa.me/919759008704" rel="noopener noreferrer" target="_blank" title="Chat on WhatsApp (24x7)">
 <i class="fa-brands fa-whatsapp text-2xl"></i>
 </a>
@@ -62,83 +86,217 @@
 </a>
 </aside>
 <!-- END: FloatingQuickActions -->
+
+<!-- BEGIN: MobileStickyBottomBar -->
+<!-- Mobile Sticky Bottom Emergency & Booking Bar (High conversion hospital UX for smartphones) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-3 py-1.5 safe-pb shadow-[0_-4px_25px_rgba(0,0,0,0.12)]" aria-label="Mobile quick actions">
+  <div class="grid grid-cols-3 gap-2">
+    <a class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-cyan-50/80 active:bg-cyan-100 text-brand-tealDark transition-all" href="tel:+919759008704">
+      <i class="fa-solid fa-phone-volume text-brand-teal text-base mb-0.5"></i>
+      <span class="text-[11px] font-extrabold tracking-tight">Call 24/7</span>
+    </a>
+    <a class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-emerald-50/80 active:bg-emerald-100 text-emerald-800 transition-all" href="https://wa.me/919759008704" rel="noopener noreferrer" target="_blank">
+      <i class="fa-brands fa-whatsapp text-emerald-600 text-lg mb-0.5"></i>
+      <span class="text-[11px] font-extrabold tracking-tight">WhatsApp</span>
+    </a>
+    <a class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-brand-teal hover:bg-brand-tealDark text-white shadow-sm active:scale-95 transition-all" href="#book-appointment">
+      <i class="fa-regular fa-calendar-check text-base mb-0.5"></i>
+      <span class="text-[11px] font-extrabold tracking-tight">Book OPD</span>
+    </a>
+  </div>
+</nav>
+<!-- END: MobileStickyBottomBar -->
+
 <!-- BEGIN: TopBar -->
-<div class="bg-brand-navyDark text-slate-200 text-xs py-2 px-4 border-b border-slate-700/50" data-purpose="announcement-bar">
-<div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2 text-xs">
-<div class="flex items-center flex-wrap gap-4 font-medium">
-<span class="inline-flex items-center text-emerald-400">
-<i class="fa-brands fa-whatsapp mr-1.5 text-sm"></i> WhatsApp 24/7: 
-          <a class="ml-1 text-white hover:underline" href="https://wa.me/919759008704">+91 97590 08704</a>
-</span>
+<div class="bg-brand-navyDark text-slate-200 text-xs py-2 px-3 sm:px-4 border-b border-slate-700/50" data-purpose="announcement-bar">
+<div class="max-w-7xl mx-auto flex justify-between items-center gap-2 text-xs">
+<div class="flex items-center flex-wrap gap-2 sm:gap-4 font-medium">
+<a class="inline-flex items-center text-emerald-400 hover:text-emerald-300 font-semibold" href="tel:+919759008704">
+<i class="fa-solid fa-phone-volume mr-1.5 text-cyan-400 text-xs animate-pulse"></i>
+<span class="hidden xs:inline">24x7 Emergency: </span>+91 97590 08704
+</a>
 <span class="hidden sm:inline-block text-slate-500">|</span>
-<span class="inline-flex items-center text-slate-300">
-<i class="fa-solid fa-phone-volume mr-1.5 text-cyan-400 text-xs"></i> 24x7 Emergency: 
-          <a class="ml-1 text-white hover:underline" href="tel:+919759008704">+91 97590 08704</a>
+<span class="hidden sm:inline-flex items-center text-slate-300">
+<i class="fa-brands fa-whatsapp mr-1 text-emerald-400 text-xs"></i> 24x7 WhatsApp Desk
 </span>
-<span class="hidden sm:inline-block text-slate-500">|</span>
-<span class="inline-flex items-center text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded text-[11px]">
-<i class="fa-solid fa-id-card mr-1"></i> PM-JAY Ayushman Cashless Facility Available
-        </span>
 </div>
-<div class="flex items-center gap-3 text-slate-300 text-[11px]">
-<span class=""><i class="fa-solid fa-location-dot text-rose-400 mr-1"></i> Aruna Nagar, Etah (U.P)</span>
+<div class="flex items-center gap-2 sm:gap-3 text-slate-300 text-[11px]">
+<span class="inline-flex items-center text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold">
+<i class="fa-solid fa-id-card mr-1 text-[10px]"></i> Ayushman Cashless
+</span>
+<span class="hidden md:inline-block text-slate-400">
+<i class="fa-solid fa-location-dot text-rose-400 mr-1"></i> Aruna Nagar, Etah
+</span>
 </div>
 </div>
 </div>
 <!-- END: TopBar -->
+
 <!-- BEGIN: MainHeader -->
-<header class="bg-white sticky top-0 z-40 shadow-sm transition-all border-b border-slate-100" data-purpose="site-header"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between"><a class="flex items-center gap-2.5 sm:gap-3 group" href="#"><img alt="Dr. Himanshu Hospital Logo" class="h-10 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGKHvvuifN0H34G1DFcApkGQ_ZeBRIrD93U4nAK-A3VpobY4Mw3X3-6Qf-NZaaSGYph-Nyk3cT2ojSXhtJoTtesEBwqoRNiKPXQL8bTTmoJGXfvfNFGRZFTZdfOGs4eUVozVGtp0yGyI1ZU4g-rpFaILHnE9BiUyNUD3cdvB18j3OfhWgzV76qc_tN9JQNGRrDpMOwK1b3M87I6MTpkh2KeFpkY92ifLldSWtpJsa4VJH0dHCLyF6ZzNjCgA0owMlGzXY"><div class="border-l border-slate-200 pl-2.5 sm:pl-3"><span class="block text-base sm:text-lg font-extrabold text-brand-navy tracking-tight leading-none">DR. HIMANSHU</span><span class="block text-xs sm:text-sm font-bold text-brand-teal tracking-wider uppercase">HOSPITAL</span><span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-500 font-semibold hidden xs:block">Care • Precision • Confidence</span></div></a><nav class="hidden xl:flex items-center space-x-6 text-sm font-semibold text-slate-700" data-purpose="primary-navigation"><a class="text-brand-teal hover:text-brand-tealDark transition-colors" href="#home">Home</a><a class="hover:text-brand-teal transition-colors" href="#about">About Us</a><a class="hover:text-brand-teal transition-colors" href="#specialities">Specialities</a><a class="hover:text-brand-teal transition-colors" href="#doctors">Doctors</a><a class="hover:text-brand-teal transition-colors flex items-center gap-1" href="#ayushman"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Ayushman / Cashless</a><a class="hover:text-brand-teal transition-colors" href="#why-choose">Infrastructure</a><a class="hover:text-brand-teal transition-colors" href="#faq">FAQ</a><a class="hover:text-brand-teal transition-colors" href="#contact">Contact</a></nav><div class="flex items-center gap-2 sm:gap-3"><a class="inline-flex items-center justify-center px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white bg-brand-teal hover:bg-brand-tealDark shadow-md transition-all duration-200 hover:shadow-lg" href="#book-appointment">Book Appointment</a><button aria-label="Toggle menu" class="xl:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none" onclick="const m=document.getElementById('mobile-nav'); m.classList.toggle('hidden');"><i class="fa-solid fa-bars text-xl"></i></button></div></div><div class="hidden xl:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg" id="mobile-nav"><a class="block py-2 text-sm font-semibold text-brand-teal border-b border-slate-50" href="#home" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Home</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal border-b border-slate-50" href="#about" onclick="document.getElementById('mobile-nav').classList.add('hidden')">About Us</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal border-b border-slate-50" href="#specialities" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Specialities</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal border-b border-slate-50" href="#doctors" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Doctors</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal border-b border-slate-50" href="#why-choose" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Infrastructure</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal border-b border-slate-50" href="#faq" onclick="document.getElementById('mobile-nav').classList.add('hidden')">FAQ</a><a class="block py-2 text-sm font-semibold text-slate-700 hover:text-brand-teal" href="#contact" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Contact &amp; Address</a></div></header>
+<header class="bg-white sticky top-0 z-40 shadow-sm transition-all border-b border-slate-100" data-purpose="site-header">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+<a class="flex items-center gap-2 sm:gap-3 group min-w-0" href="#">
+<img alt="Dr. Himanshu Hospital Logo" class="h-9 sm:h-12 md:h-14 w-auto object-contain transition-transform group-hover:scale-105 flex-shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGKHvvuifN0H34G1DFcApkGQ_ZeBRIrD93U4nAK-A3VpobY4Mw3X3-6Qf-NZaaSGYph-Nyk3cT2ojSXhtJoTtesEBwqoRNiKPXQL8bTTmoJGXfvfNFGRZFTZdfOGs4eUVozVGtp0yGyI1ZU4g-rpFaILHnE9BiUyNUD3cdvB18j3OfhWgzV76qc_tN9JQNGRrDpMOwK1b3M87I6MTpkh2KeFpkY92ifLldSWtpJsa4VJH0dHCLyF6ZzNjCgA0owMlGzXY">
+<div class="border-l border-slate-200 pl-2 sm:pl-3 truncate">
+<span class="block text-sm sm:text-lg font-extrabold text-brand-navy tracking-tight leading-none truncate">DR. HIMANSHU</span>
+<span class="block text-[10px] sm:text-xs font-bold text-brand-teal tracking-wider uppercase">HOSPITAL</span>
+<span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-500 font-semibold hidden md:block">Care • Precision • Confidence</span>
+</div>
+</a>
+
+<!-- Desktop Navigation -->
+<nav class="hidden xl:flex items-center space-x-6 text-sm font-semibold text-slate-700" data-purpose="primary-navigation">
+<a class="text-brand-teal hover:text-brand-tealDark transition-colors" href="#home">Home</a>
+<a class="hover:text-brand-teal transition-colors" href="#about">About Us</a>
+<a class="hover:text-brand-teal transition-colors" href="#specialities">Specialities</a>
+<a class="hover:text-brand-teal transition-colors" href="#doctors">Doctors</a>
+<a class="hover:text-brand-teal transition-colors flex items-center gap-1" href="#ayushman"><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Ayushman / Cashless</a>
+<a class="hover:text-brand-teal transition-colors" href="#why-choose">Infrastructure</a>
+<a class="hover:text-brand-teal transition-colors" href="#faq">FAQ</a>
+<a class="hover:text-brand-teal transition-colors" href="#contact">Contact</a>
+</nav>
+
+<!-- Header Actions -->
+<div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+<a class="inline-flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white bg-brand-teal hover:bg-brand-tealDark shadow-sm transition-all duration-200 hover:shadow" href="#book-appointment">
+<span class="hidden xs:inline">Book </span>Appointment
+</a>
+<button id="mobile-menu-btn" aria-label="Toggle navigation menu" class="xl:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition-colors">
+<i id="menu-icon" class="fa-solid fa-bars text-lg sm:text-xl"></i>
+</button>
+</div>
+</div>
+
+<!-- Mobile Off-Canvas Drawer Backdrop -->
+<div id="mobile-drawer-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<!-- Mobile Off-Canvas Navigation Drawer -->
+<div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col overflow-y-auto" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+<!-- Drawer Header -->
+<div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+<div class="flex items-center gap-2.5">
+<img alt="Dr. Himanshu Hospital" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGKHvvuifN0H34G1DFcApkGQ_ZeBRIrD93U4nAK-A3VpobY4Mw3X3-6Qf-NZaaSGYph-Nyk3cT2ojSXhtJoTtesEBwqoRNiKPXQL8bTTmoJGXfvfNFGRZFTZdfOGs4eUVozVGtp0yGyI1ZU4g-rpFaILHnE9BiUyNUD3cdvB18j3OfhWgzV76qc_tN9JQNGRrDpMOwK1b3M87I6MTpkh2KeFpkY92ifLldSWtpJsa4VJH0dHCLyF6ZzNjCgA0owMlGzXY">
+<div>
+<span class="block text-xs font-extrabold text-brand-navy">DR. HIMANSHU</span>
+<span class="block text-[9px] font-bold text-brand-teal tracking-wider uppercase">HOSPITAL</span>
+</div>
+</div>
+<button id="mobile-drawer-close" aria-label="Close navigation" class="w-8 h-8 rounded-full bg-slate-200/80 hover:bg-slate-300 flex items-center justify-center text-slate-700 active:scale-95 transition-transform">
+<i class="fa-solid fa-xmark text-sm"></i>
+</button>
+</div>
+
+<!-- Drawer Quick Contact Notice -->
+<div class="p-4 pb-2">
+<div class="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-between">
+<div>
+<span class="block text-[10px] font-bold uppercase tracking-wider text-rose-600">24/7 Emergency Casualty</span>
+<a class="text-xs font-extrabold text-slate-900 hover:underline" href="tel:+919759008704">+91 97590 08704</a>
+</div>
+<a class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs shadow-sm" href="tel:+919759008704">
+<i class="fa-solid fa-phone"></i>
+</a>
+</div>
+</div>
+
+<!-- Drawer Nav Links -->
+<nav class="p-4 space-y-1 flex-1">
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-brand-teal bg-teal-50/50" href="#home">
+<span class="flex items-center gap-3"><i class="fa-solid fa-house w-4 text-center"></i> Home</span>
+<i class="fa-solid fa-chevron-right text-xs text-brand-teal/60"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#about">
+<span class="flex items-center gap-3"><i class="fa-solid fa-hospital w-4 text-center text-slate-400"></i> About Hospital</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#specialities">
+<span class="flex items-center gap-3"><i class="fa-solid fa-stethoscope w-4 text-center text-slate-400"></i> Specialities</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#doctors">
+<span class="flex items-center gap-3"><i class="fa-solid fa-user-doctor w-4 text-center text-slate-400"></i> Doctors</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#ayushman">
+<span class="flex items-center gap-3"><i class="fa-solid fa-id-card w-4 text-center text-emerald-500"></i> Ayushman / Cashless</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">100% Free</span>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#why-choose">
+<span class="flex items-center gap-3"><i class="fa-solid fa-microscope w-4 text-center text-slate-400"></i> Infrastructure</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#faq">
+<span class="flex items-center gap-3"><i class="fa-regular fa-circle-question w-4 text-center text-slate-400"></i> FAQ</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+<a class="drawer-link flex items-center justify-between p-3 rounded-xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors" href="#contact">
+<span class="flex items-center gap-3"><i class="fa-solid fa-location-dot w-4 text-center text-slate-400"></i> Contact &amp; Address</span>
+<i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+</a>
+</nav>
+
+<!-- Drawer Footer Action Buttons -->
+<div class="p-4 border-t border-slate-100 bg-slate-50 space-y-2 safe-pb">
+<a class="drawer-link w-full py-3 bg-brand-teal hover:bg-brand-tealDark text-white text-center rounded-xl text-xs font-bold uppercase tracking-wider block shadow-md transition-all" href="#book-appointment">
+  Book Appointment
+</a>
+<a class="w-full py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-center rounded-xl text-xs font-bold block transition-all" href="https://wa.me/919759008704" rel="noopener noreferrer" target="_blank">
+  <i class="fa-brands fa-whatsapp text-sm mr-1"></i> Chat on WhatsApp
+</a>
+</div>
+</div>
+</header>
 <!-- END: MainHeader -->
 <!-- BEGIN: HeroSection -->
-<section class="relative min-h-[580px] lg:min-h-[620px] bg-slate-900 text-white flex items-center overflow-hidden" data-purpose="hero-banner" id="home">
+<section class="relative min-h-[540px] sm:min-h-[580px] lg:min-h-[620px] bg-slate-900 text-white flex items-center overflow-hidden" data-purpose="hero-banner" id="home">
 <!-- Background Operating Theatre & Clinical Setup Backdrop -->
 <div class="absolute inset-0 z-0">
 <img alt="Modern Advanced Medical Operation Facility" class="w-full h-full object-cover object-center filter brightness-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6QTJf5ffIoF2MjXig-EQrAjBHLygNX1Qz2sQzxpAV61v0ASOTarcUamk0Sf3-Ni2CHY51Wopf6bH1GoFbDI4QUX4cQMsAiips8R00uCx6BD25mLxVhzA6m3hUsnHmJMO8hajsw15dZrB62q6raqS0BsO1qgyP7Lndnak0c23-C2SN6MJmVQiJLJL6WXNM4DAVjvyEBLTrVDNO4R_p_PAGL7SxyeLZH-B7Hu0I0nss_IfhBbIDJNBRkg">
 <div class="absolute inset-0 hero-gradient-overlay"></div>
 </div>
-<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 w-full">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 w-full">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 <!-- Left: Headline & Actions -->
-<div class="lg:col-span-8 space-y-6">
-<div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-xs font-semibold tracking-wide backdrop-blur-sm">
+<div class="lg:col-span-8 space-y-4 sm:space-y-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-[11px] sm:text-xs font-semibold tracking-wide backdrop-blur-sm">
 <i class="fa-solid fa-shield-halved"></i> State-of-the-art Surgical Technology in Etah
-          </div>
-<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-            Advanced Medical &amp; <br class="hidden sm:inline">
+</div>
+<h1 class="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15] break-words">
+  Advanced Medical &amp; <br class="hidden sm:inline">
 <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-200">Surgical Facilities</span>
 </h1>
-<p class="text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
-            Equipped with the latest modular OT, high-definition laparoscopy, telemetry ICU, and trauma reconstructive surgery. Delivering tertiary hospital care right in the heart of Etah.
-          </p>
-<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4 w-full">
-<a class="px-8 py-3.5 rounded-md font-bold text-sm text-white bg-brand-teal hover:bg-brand-tealDark shadow-lg shadow-brand-teal/30 transition-all transform hover:-translate-y-0.5" href="#book-appointment">
-              Book Appointment
-            </a>
-<a class="px-7 py-3.5 rounded-md font-bold text-sm text-white border border-white/40 hover:bg-white/10 transition-all backdrop-blur-sm" href="#about">
-              Learn More <i class="fa-solid fa-arrow-right-long ml-2 text-xs"></i>
+<p class="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl font-normal leading-relaxed">
+  Equipped with the latest modular OT, high-definition laparoscopy, telemetry ICU, and trauma reconstructive surgery. Delivering tertiary hospital care right in the heart of Etah.
+</p>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 sm:pt-4 w-full">
+<a class="px-6 sm:px-8 py-3.5 rounded-xl sm:rounded-md font-bold text-sm text-center text-white bg-brand-teal hover:bg-brand-tealDark shadow-lg shadow-brand-teal/30 transition-all transform hover:-translate-y-0.5 active:scale-95" href="#book-appointment">
+  Book Appointment
+</a>
+<a class="px-6 sm:px-7 py-3.5 rounded-xl sm:rounded-md font-bold text-sm text-center text-white border border-white/40 hover:bg-white/10 transition-all backdrop-blur-sm active:scale-95" href="#about">
+  Learn More <i class="fa-solid fa-arrow-right-long ml-2 text-xs"></i>
 </a>
 </div>
 <!-- Quick trust indicators -->
-<div class="pt-6 grid grid-cols-3 gap-4 border-t border-white/10 max-w-lg text-xs text-slate-300">
+<div class="pt-4 sm:pt-6 grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-4 border-t border-white/10 max-w-lg text-xs text-slate-300">
 <div class="flex items-center gap-2">
-<i class="fa-solid fa-circle-check text-emerald-400"></i>
-<span class="">Ayushman Empanelled</span>
+<i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0"></i>
+<span class="font-medium">Ayushman Empanelled</span>
 </div>
 <div class="flex items-center gap-2">
-<i class="fa-solid fa-circle-check text-emerald-400"></i>
-<span class="">24/7 Critical Trauma</span>
+<i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0"></i>
+<span class="font-medium">24/7 Critical Trauma</span>
 </div>
 <div class="flex items-center gap-2">
-<i class="fa-solid fa-circle-check text-emerald-400"></i>
-<span class="">Modular Laminar OT</span>
+<i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0"></i>
+<span class="font-medium">Modular Laminar OT</span>
 </div>
 </div>
 </div>
 <!-- Right: Partner & Quality Badges matching Reference right badges -->
-<div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-center lg:items-end gap-4 justify-center w-full">
+<div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-center lg:items-end gap-3 sm:gap-4 justify-center w-full">
 <!-- NABH Standard Badge Card -->
-<div class="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl w-64 border-l-4 border-emerald-500 flex items-center gap-3 transform hover:scale-105 transition-transform">
-<div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 text-xl font-bold flex-shrink-0">
+<div class="bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl shadow-xl w-full max-w-sm sm:max-w-xs lg:w-64 border-l-4 border-emerald-500 flex items-center gap-3 transform hover:scale-105 transition-transform">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 text-lg sm:text-xl font-bold flex-shrink-0">
 <i class="fa-solid fa-award"></i>
 </div>
 <div>
@@ -147,8 +305,8 @@
 </div>
 </div>
 <!-- Ayushman Bharat Digital Mission card -->
-<div class="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl w-64 border-l-4 border-brand-teal flex items-center gap-3 transform hover:scale-105 transition-transform">
-<div class="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center text-brand-teal text-xl font-bold flex-shrink-0">
+<div class="bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl shadow-xl w-full max-w-sm sm:max-w-xs lg:w-64 border-l-4 border-brand-teal flex items-center gap-3 transform hover:scale-105 transition-transform">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-cyan-50 rounded-full flex items-center justify-center text-brand-teal text-lg sm:text-xl font-bold flex-shrink-0">
 <i class="fa-solid fa-fingerprint"></i>
 </div>
 <div>
@@ -158,8 +316,8 @@
 </div>
 </div>
 <!-- LifeCare Diagnostics card -->
-<div class="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl w-64 border-l-4 border-blue-600 flex items-center gap-3 transform hover:scale-105 transition-transform">
-<div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold flex-shrink-0">
+<div class="bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-xl shadow-xl w-full max-w-sm sm:max-w-xs lg:w-64 border-l-4 border-blue-600 flex items-center gap-3 transform hover:scale-105 transition-transform">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-lg sm:text-xl font-bold flex-shrink-0">
 <i class="fa-solid fa-flask-vial"></i>
 </div>
 <div>
@@ -173,35 +331,35 @@
 </section>
 <!-- END: HeroSection -->
 <!-- BEGIN: ImportantLinksRow -->
-<section class="relative -mt-8 z-20 max-w-6xl mx-auto px-4 sm:px-6" data-purpose="associated-wings">
+<section class="relative -mt-4 sm:-mt-8 z-20 max-w-6xl mx-auto px-3 sm:px-6" data-purpose="associated-wings">
 <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-4 md:p-6">
-<p class="text-center text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Affiliated Specialized Wings &amp; Partners</p>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-<div class="p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-cyan-50/50 hover:border-cyan-200 transition-all flex items-center gap-4">
-<div class="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-brand-teal text-2xl flex-shrink-0">
+<p class="text-center text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 sm:mb-4">Affiliated Specialized Wings &amp; Partners</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+<div class="p-3.5 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-cyan-50/50 hover:border-cyan-200 transition-all flex items-center gap-3 sm:gap-4">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-brand-teal text-xl sm:text-2xl flex-shrink-0">
 <i class="fa-solid fa-tooth"></i>
 </div>
 <div>
-<h4 class="text-sm font-bold text-slate-900">Dr. Himanshu MaxFax Center</h4>
-<p class="text-xs text-slate-500">Advanced Facial Trauma &amp; Oral Surgery</p>
+<h4 class="text-xs sm:text-sm font-bold text-slate-900">Dr. Himanshu MaxFax Center</h4>
+<p class="text-[11px] sm:text-xs text-slate-500">Advanced Facial Trauma &amp; Oral Surgery</p>
 </div>
 </div>
-<div class="p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-emerald-50/50 hover:border-emerald-200 transition-all flex items-center gap-4">
-<div class="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-600 text-2xl flex-shrink-0">
+<div id="ayushman" class="scroll-mt-24 p-3.5 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-emerald-50/50 hover:border-emerald-200 transition-all flex items-center gap-3 sm:gap-4">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-600 text-xl sm:text-2xl flex-shrink-0">
 <i class="fa-solid fa-id-card-clip"></i>
 </div>
 <div>
-<h4 class="text-sm font-bold text-slate-900">Ayushman Bharat PM-JAY</h4>
-<p class="text-xs text-slate-500">100% Cashless Government Empanelled</p>
+<h4 class="text-xs sm:text-sm font-bold text-slate-900">Ayushman Bharat PM-JAY</h4>
+<p class="text-[11px] sm:text-xs text-slate-500">100% Cashless Government Empanelled</p>
 </div>
 </div>
-<div class="p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-blue-50/50 hover:border-blue-200 transition-all flex items-center gap-4">
-<div class="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-blue-600 text-2xl flex-shrink-0">
+<div class="p-3.5 sm:p-4 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-blue-50/50 hover:border-blue-200 transition-all flex items-center gap-3 sm:gap-4">
+<div class="w-11 h-11 sm:w-12 sm:h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-blue-600 text-xl sm:text-2xl flex-shrink-0">
 <i class="fa-solid fa-dna"></i>
 </div>
 <div>
-<h4 class="text-sm font-bold text-slate-900">LifeCare Labs &amp; Trauma Unit</h4>
-<p class="text-xs text-slate-500">Round-the-clock Digital Diagnostics</p>
+<h4 class="text-xs sm:text-sm font-bold text-slate-900">LifeCare Labs &amp; Trauma Unit</h4>
+<p class="text-[11px] sm:text-xs text-slate-500">Round-the-clock Digital Diagnostics</p>
 </div>
 </div>
 </div>
@@ -209,58 +367,58 @@
 </section>
 <!-- END: ImportantLinksRow -->
 <!-- BEGIN: AboutSection -->
-<section class="py-20 bg-white" data-purpose="about-section" id="about">
+<section class="py-12 sm:py-20 bg-white" data-purpose="about-section" id="about">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 <!-- Left Column: Hospital Narrative & Metrics -->
-<div class="lg:col-span-7 space-y-6">
+<div class="lg:col-span-7 space-y-4 sm:space-y-6">
 <div class="space-y-2">
 <span class="text-xs font-extrabold uppercase tracking-widest text-brand-teal">About Dr. Himanshu Hospital</span>
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug">
-              Compassionate Care Built On Clinical Precision &amp; Trust
-            </h2>
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug">
+  Compassionate Care Built On Clinical Precision &amp; Trust
+</h2>
 </div>
-<p class="text-slate-600 leading-relaxed text-sm sm:text-base">
-            Dr. Himanshu Hospital in Etah is an advanced multispecialty and surgical healthcare institution dedicated to providing ethical, transparent, and affordable medical treatments. Established under distinguished surgical leadership, our facility is engineered strictly per national quality protocols to cater to emergency trauma, complex maxillofacial surgeries, maternal-child wellness, and intensive critical care.
-          </p>
-<p class="text-slate-600 leading-relaxed text-sm sm:text-base">
-            Our vision is to spare families the distress of traveling to distant metropolitan centers during golden hours by providing fully equipped laminar airflow modular operation theatres, dedicated telemetry ICUs, and on-site 24x7 emergency resuscitation teams right here in Etah.
-          </p>
+<p class="text-slate-600 leading-relaxed text-xs sm:text-sm sm:leading-relaxed">
+  Dr. Himanshu Hospital in Etah is an advanced multispecialty and surgical healthcare institution dedicated to providing ethical, transparent, and affordable medical treatments. Established under distinguished surgical leadership, our facility is engineered strictly per national quality protocols to cater to emergency trauma, complex maxillofacial surgeries, maternal-child wellness, and intensive critical care.
+</p>
+<p class="text-slate-600 leading-relaxed text-xs sm:text-sm sm:leading-relaxed">
+  Our vision is to spare families the distress of traveling to distant metropolitan centers during golden hours by providing fully equipped laminar airflow modular operation theatres, dedicated telemetry ICUs, and on-site 24x7 emergency resuscitation teams right here in Etah.
+</p>
 <!-- 4 Stats Counters Matching reference snapshot -->
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 py-3 sm:py-4">
 <div class="border-l-2 border-brand-teal pl-3">
 <span class="block text-2xl sm:text-3xl font-extrabold text-slate-900">100+</span>
-<span class="text-xs font-semibold text-slate-500">Inpatient Beds</span>
+<span class="text-[11px] sm:text-xs font-semibold text-slate-500">Inpatient Beds</span>
 </div>
 <div class="border-l-2 border-emerald-500 pl-3">
 <span class="block text-2xl sm:text-3xl font-extrabold text-slate-900">24/7</span>
-<span class="text-xs font-semibold text-slate-500">Emergency &amp; Trauma</span>
+<span class="text-[11px] sm:text-xs font-semibold text-slate-500">Emergency &amp; Trauma</span>
 </div>
 <div class="border-l-2 border-cyan-500 pl-3">
 <span class="block text-2xl sm:text-3xl font-extrabold text-slate-900">11+</span>
-<span class="text-xs font-semibold text-slate-500">Departments</span>
+<span class="text-[11px] sm:text-xs font-semibold text-slate-500">Departments</span>
 </div>
 <div class="border-l-2 border-blue-500 pl-3">
 <span class="block text-2xl sm:text-3xl font-extrabold text-slate-900">4+</span>
-<span class="text-xs font-semibold text-slate-500">Modular OTs</span>
+<span class="text-[11px] sm:text-xs font-semibold text-slate-500">Modular OTs</span>
 </div>
 </div>
 <div>
-<a class="inline-flex items-center gap-2 bg-brand-navy hover:bg-brand-teal text-white text-xs uppercase font-bold tracking-wider px-6 py-3 rounded-md transition-all" href="#specialities">
-              Learn More <i class="fa-solid fa-arrow-right"></i>
+<a class="inline-flex items-center gap-2 bg-brand-navy hover:bg-brand-teal text-white text-xs uppercase font-bold tracking-wider px-5 sm:px-6 py-2.5 sm:py-3 rounded-md transition-all active:scale-95" href="#specialities">
+  Learn More <i class="fa-solid fa-arrow-right"></i>
 </a>
 </div>
 </div>
 <!-- Right Column: Medical Infrastructure Visual + Experience Badge -->
-<div class="lg:col-span-5 relative">
+<div class="lg:col-span-5 relative mt-4 lg:mt-0">
 <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-<img alt="Modular Operation Theatre Dr. Himanshu Hospital" class="w-full h-[420px] object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf3kLZsLO9KBX9fHDbknTfsgfTcz-K7pnPmXoYjhiizmnGvwavjS00JciHKRsvG3-AK43X-ZJ2phxmmT4SXhc8zSVHYoKg__RSEnuWUznKgP4pmf3X3npfq0_JYCo7diiB8wLPM9cmETsWkwzANsND7AzihwyP9bb-EIY22SzfOQA6wf56NmfMdShsZo-hj9XjnjcHCf47i03Cgn6JXbrXv2wWhXoyMGDHCCUPizXv_xHCHSx86Pkyqg">
+<img alt="Modular Operation Theatre Dr. Himanshu Hospital" class="w-full h-[260px] sm:h-[360px] lg:h-[420px] object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf3kLZsLO9KBX9fHDbknTfsgfTcz-K7pnPmXoYjhiizmnGvwavjS00JciHKRsvG3-AK43X-ZJ2phxmmT4SXhc8zSVHYoKg__RSEnuWUznKgP4pmf3X3npfq0_JYCo7diiB8wLPM9cmETsWkwzANsND7AzihwyP9bb-EIY22SzfOQA6wf56NmfMdShsZo-hj9XjnjcHCf47i03Cgn6JXbrXv2wWhXoyMGDHCCUPizXv_xHCHSx86Pkyqg">
 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 </div>
-<!-- Prominent Experience Badge mirroring https://lh3.googleusercontent.com/aida-public/AB6AXuBZapa16GDvA592Eu30DWeelQ4A86ewnueF91kpdHiqVKRORKsgtwj0d5hBle44zOzNrZh2nieB8pHSQjTVvPJ6DJFfLxWbrlTZOCaEqfc4umlxmfeVtgLUwZP4PHI9lnAUWknAZcNySNSeUNlDp9o0k3UCIJC_0RwVMH3tXYJrcR2_9Ofnujx1qDZ9ffkAWtkdEdgoH5RWwpDRUcdYr5WnGjC-fp3G4_j1NuRASobssVrW6xNvwsx4nKtepmt_mbdnh9g teal card overlay -->
-<div class="absolute -bottom-4 left-4 sm:-bottom-6 sm:-left-6 bg-brand-teal text-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl max-w-[180px] sm:max-w-[220px] border-4 border-white">
-<span class="block text-4xl font-extrabold leading-none">15+</span>
-<span class="block text-sm font-semibold tracking-wide mt-1">Years of Clinical &amp; Surgical Excellence</span>
+<!-- Prominent Experience Badge -->
+<div class="absolute -bottom-3 left-3 sm:-bottom-6 sm:-left-6 bg-brand-teal text-white p-3.5 sm:p-6 rounded-xl sm:rounded-2xl shadow-xl max-w-[150px] sm:max-w-[220px] border-4 border-white">
+<span class="block text-2xl sm:text-4xl font-extrabold leading-none">15+</span>
+<span class="block text-xs sm:text-sm font-semibold tracking-wide mt-1">Years of Clinical &amp; Surgical Excellence</span>
 </div>
 </div>
 </div>
@@ -268,282 +426,294 @@
 </section>
 <!-- END: AboutSection -->
 <!-- BEGIN: SpecialitiesSection -->
-<section class="py-20 bg-slate-50 border-t border-b border-slate-200/60" data-purpose="hospital-specialities" id="specialities">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 mb-12">
+<section class="py-12 sm:py-20 bg-slate-50 border-t border-b border-slate-200/60" data-purpose="hospital-specialities" id="specialities">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
 <span class="text-xs font-extrabold uppercase tracking-widest text-brand-teal">Comprehensive Healthcare</span>
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Specialities</h2>
-<p class="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto">
-        Explore our wide range of surgical and medical services designed to provide precision diagnosis, gentle bedside care, and rapid rehabilitation.
-      </p>
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">Our Specialities</h2>
+<p class="text-slate-500 text-xs sm:text-base max-w-2xl mx-auto">
+  Explore our wide range of surgical and medical services designed to provide precision diagnosis, gentle bedside care, and rapid rehabilitation.
+</p>
 </div>
 <!-- 12 Specialty Cards Grid Matching Reference Structure -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-4">
 <!-- Speciality 1 (Flagship) -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-tooth"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Dental &amp; Maxillofacial</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Dental &amp; Maxillofacial</h3>
 </div>
 <!-- Speciality 2 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-user-doctor"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">General Medicine</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">General Medicine</h3>
 </div>
 <!-- Speciality 3 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-head-side-mask"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">ENT Specialist</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">ENT Specialist</h3>
 </div>
 <!-- Speciality 4 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-brain"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Neuro Surgery</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Neuro Surgery</h3>
 </div>
 <!-- Speciality 5 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-ribbon"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Cancer Surgery</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Cancer Surgery</h3>
 </div>
 <!-- Speciality 6 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-person-pregnant"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Gynaecology &amp; OBS</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Gynaecology &amp; OBS</h3>
 </div>
 <!-- Speciality 7 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-bone"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Orthopaedics &amp; Trauma</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Orthopaedics &amp; Trauma</h3>
 </div>
 <!-- Speciality 8 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-bed-pulse"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Intensive Care (ICU)</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Intensive Care (ICU)</h3>
 </div>
 <!-- Speciality 9 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-laptop-medical"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Modular OT &amp; Lap</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Modular OT &amp; Lap</h3>
 </div>
 <!-- Speciality 10 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-lungs"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Ventilator Support</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Ventilator Support</h3>
 </div>
 <!-- Speciality 11 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-truck-medical"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">24x7 Emergency</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">24x7 Emergency</h3>
 </div>
 <!-- Speciality 12 -->
-<div class="bg-white rounded-xl p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group">
-<div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-xl transition-colors">
+<div class="bg-white rounded-xl p-3.5 sm:p-5 text-center shadow-sm hover:shadow-md border border-slate-100 hover:border-brand-teal transition-all group active:scale-95">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2.5 sm:mb-3 rounded-full bg-cyan-50 group-hover:bg-brand-teal group-hover:text-white text-brand-teal flex items-center justify-center text-lg sm:text-xl transition-colors">
 <i class="fa-solid fa-file-invoice-dollar"></i>
 </div>
-<h3 class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Ayushman &amp; TPA</h3>
+<h3 class="text-[11px] sm:text-xs md:text-sm font-bold text-slate-800 group-hover:text-brand-teal leading-snug">Ayushman &amp; TPA</h3>
 </div>
 </div>
 </div>
 </section>
 <!-- END: SpecialitiesSection -->
 <!-- BEGIN: DoctorsSection -->
-<section class="py-20 bg-white" data-purpose="medical-specialists" id="doctors">
+<section class="py-12 sm:py-20 bg-white" data-purpose="medical-specialists" id="doctors">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center space-y-3 mb-10">
+<div class="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-10">
 <span class="text-xs font-extrabold uppercase tracking-widest text-brand-teal">Dedicated Care Team</span>
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Meet Our Specialists</h2>
-<p class="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto">
-          Our team of highly qualified and experienced surgical doctors is committed to delivering precision healthcare with human warmth.
-        </p>
-<!-- Toggle buttons pill matching reference -->
-<div class="inline-flex p-1 bg-slate-100 rounded-full border border-slate-200 mt-2">
-<button class="px-5 py-1.5 text-xs font-bold rounded-full bg-brand-navy text-white shadow-sm">Core Faculty</button>
-<button class="px-5 py-1.5 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900">Visiting Consultants</button>
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">Meet Our Specialists</h2>
+<p class="text-slate-500 text-xs sm:text-base max-w-2xl mx-auto">
+  Our team of highly qualified and experienced surgical doctors is committed to delivering precision healthcare with human warmth.
+</p>
+<!-- Toggle buttons pill with working JS toggle -->
+<div class="inline-flex p-1 bg-slate-100 rounded-full border border-slate-200 mt-2" role="tablist" aria-label="Doctor categories">
+<button id="tab-core" class="px-4 sm:px-5 py-2 text-xs font-bold rounded-full bg-brand-navy text-white shadow-sm transition-all" onclick="filterDoctors('core')">Core Faculty</button>
+<button id="tab-visiting" class="px-4 sm:px-5 py-2 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition-all" onclick="filterDoctors('visiting')">Visiting Consultants</button>
 </div>
 </div>
-<!-- Doctor Cards Grid matching exact 4-column card format of https://lh3.googleusercontent.com/aida-public/AB6AXuBUeV8LYemxe8H8wF7PP-iNMX62S5gtqwKnoG04B8WjOShfvAhSHrKgYqZCSlzG0HBRb-4ketolB0qEJLKJTZePC9mmw7n-1kDlt19cJl4-9acf6kd7iJVgw3AJs58YtnKwHikIuoBWGnXM6K_DoinekKOXTVNsRznjbokz5n4VeNaNkRPOfVzQqVeYJTddoCnc1cf5bSv-HwvkWLXAaE5u0SEk7C3iLjI5hG7aecrtfOty5N1xzVOCcESBEvA12NKPWV8 -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+<!-- Doctor Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" id="doctors-grid">
 <!-- Doctor 1: Dr. Himanshu (Chief Surgeon) -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="core">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Himanshu - Oral &amp; Maxillofacial Surgeon" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ24fCOba-EZSROLPc74tfYOrQpFYpMWnGHtjx1-30_TKDxVAU0kVN_E_Owj7chll7zBo_xD1zyAmPq9nPW23ELhvZ1ZKOA3QumcFivr-YmqVY_1UPi1p12-y-MrkNfvYjBQhJ8fFh8JTkicGAROZQ8h_zrnGRM8ZsGMPhSoU-6TYdylkzYJWeghJDcNXuMHJQldgst6CakFRuMzw46luPTInxF6Ixul2AXQrXzMy1HqIlEoZRpie5aQ">
-<div class="absolute top-3 left-3 bg-brand-teal text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-              Chief Surgeon
-            </div>
+<div class="absolute top-3 left-3 bg-brand-teal text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+  Chief Surgeon
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+</div>
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Himanshu</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Oral &amp; Maxillofacial Surgeon</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Facial Trauma &amp; Reconstructive Surgery</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">BDS, MDS (Maxillofacial), FIBOMS</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Himanshu">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
 <!-- Doctor 2: Neuro Surgeon -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="core">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. R. K. Sharma - Neuro Surgeon" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJBqpC2lAYBLvp5RBI6u2_dl1eaHa84Xgx2V_q1-h18EayL0uuvj38YLE-WigbmpBPs9HIPhmpdtxEmBcdZmVFjd4sWPrsAwSCEGtKIXqtxASRhB7dUjVGWQZOdbpSJNpwX09ZAq4v-vriNP9C7Y9Tfiq48NLDN2iWs6HvaEp55z9oivMJiuRrBlvqTVFwg4mKlGWrj2l0Ppszfft9I_o5EQRygTKlrZc9Bx6fmIHkW4zAHGW5A1-mTg">
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. R. K. Sharma</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Neuro &amp; Spine Surgery</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Brain &amp; Spinal Trauma Care</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MS (General Surgery), MCh (Neuro)</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Sharma">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
 <!-- Doctor 3: Gynaecologist -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="core">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Sunita Verma - Gynaecologist" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz21l8dF1sV9JQNfXb3wOjHZl3snBbdt0OL7B1avLxQ7lVmmiFu-U5bnsjhEz5aaDnk4pUDo3q0LI1RDZx59qTwoKGeG8m6tkYfs_dRX-HA-Jb4rVasQePbEyyi0Qub1shp8wRCOGeKT0-fLgHT44uKmk7ZfVOceCgfEEAJ0MG9T9tDs7sNWySblIbmEQl-HXtK6SG0CJKif9sswOZgmm7JFWEw1fdIEFzHjT6XXZlS9U2QpUiQ6xZJA">
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Sunita Verma</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Gynaecology &amp; Obstetrics</span>
 <p class="text-[11px] text-slate-500 mt-0.5">High-Risk Pregnancy &amp; Laparoscopy</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MS (Obstetrics &amp; Gynaecology)</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Verma">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
 <!-- Doctor 4: General Physician -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="core">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Amit Saxena - General Physician" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3rT6L7bmQ5fD2j9G5jBi7DvWwHZW03cRc53JMY99lS9xKUQlK9y0y9qLJGdCbVD1kii3IuHyXBgNviKifWam_RiXN_NXMFSCzcbV9JBGxPlVL84zMztRoVT7uiJILMZPAy4eVVQN9yHJWf1scNL-8z_djkZc5HFkAugnITuTXc70ml1kvtKG-BGFLVzm93uDI_XtFppkfITjlTfSKo_X6dinuqX3k29ah9hC0jYTb_vfuaUsVVQx3Yw">
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Amit Saxena</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Internal Medicine &amp; Critical Care</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Diabetes, Cardiology &amp; ICU Specialist</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MD (Medicine), C.C.M</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Saxena">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
-<!-- Doctor 5: Surgical Oncologist -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<!-- Doctor 5: Surgical Oncologist (Visiting) -->
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="visiting">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Pradeep Yadav - Surgical Oncologist" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDBVn1dnNt_y9y88bdAT7oT7Cqmb8n_ezkAb47Lzc7U7g_4aGfk12BnovWhoowALE6fA7UuVn5oP5sqPXTrw6c1wF9JGhYe-RaO--8-hVqqL05PipRPZcOptW5SR2Wa14rF2ESIoHc8Guj96bTXjRViTUZZZ3xcBuRaSZ8V9XjcxA2N9DGPlv6PhD26XHHgyJ0xwBVnxEGTWQ23QSYb413WMGSvVdfno-Gdd1z6rsBwhobtiP67Jvemg">
+<div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+  Visiting Specialist
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+</div>
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Pradeep Yadav</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Surgical Oncologist (Cancer)</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Head, Neck &amp; Breast Cancer Surgery</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MS (Surgery), DNB (Surgical Oncology)</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Yadav">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
-<!-- Doctor 6: ENT Specialist -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<!-- Doctor 6: ENT Specialist (Visiting) -->
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="visiting">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Alok Gupta - ENT Surgeon" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGP0A6dehJj3BQ6i55kEtv38IcVtmEC1jBA47q4X3MgKlbu2EXysMC8LqjjmQ-j31lR_hcB2hW6F9wlSGuciTcg5O-Eubd6OTOZF5MEBi35KOUU9WGNFgxOS7T6vuAB0v4HexfFm2kklEIpYEpq61o0UvU941ywq_Xl9PmfwCnTKf5NZ59cIKHHRjqUJ3STbtMhqfgDEGRQbYVDsZzMXSRYUlbtM717MifFXr9Fg2nBHLPudpOftsTvw">
+<div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+  Visiting Specialist
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+</div>
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Alok Gupta</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Senior ENT Specialist</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Micro-Ear &amp; Endoscopic Sinus Surgery</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MS (ENT, Otorhinolaryngology)</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Gupta">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
-<!-- Doctor 7: Dental Rehabilitation -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<!-- Doctor 7: Dental Rehabilitation (Visiting) -->
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="visiting">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. Megha Bansal - Oral Rehabilitation" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ecfA0acsr1RCXlAT4Hbf5Bc4ZZFqPKernU_ABl99fjy7NoN86JO7mu1kFq5Z7sBYnt8eHXti_8KH0HKiaDubxl8xFrc7XOh87orIZoEv3qq78q_Whsq-K3dgh3R5OMceCyqzOD1yISd1UVQjbmAWRYE3c3N4lblXfmbLpmW8umimMlm9U2nHbsl-7ngplIae4h07oi-lyw1_X1_BACQEGRHLDMshCZuu47s9ObanzbiERs017G54BQ">
+<div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+  Visiting Specialist
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+</div>
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. Megha Bansal</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Dentistry &amp; Oral Rehabilitation</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Cosmetic &amp; Conservative Dentistry</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">BDS, MDS, FICD</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Bansal">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
-<!-- Doctor 8: Intensivist -->
-<div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-<div class="h-64 bg-slate-100 overflow-hidden relative group">
+<!-- Doctor 8: Intensivist (Visiting) -->
+<div class="doctor-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-doc-type="visiting">
+<div class="h-60 sm:h-64 bg-slate-100 overflow-hidden relative group">
 <img alt="Dr. N. K. Singh - Critical Care Intensivist" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhc8N9IJ301InEk18wAgOaEUDgsmtzbUNstEr-6oNV0hSG_GYb7RHoJyADNp2ekTIN1N1jXCa2kunaw0ICc2v1aMeYBm834oVF2TftPfrjg-a_kFEFYgA8SwGWSX_Ro_HssoRNwwfvkMTaX_qVNZzG4nz7wjN_YLOve9iX_CCPJfoILOWuOWZRLB2DJ9W7G8Y-Y2iYi2HlSrPPPcYipDQu27dNG0iKRtBePctwWOMYIfaQjhrY3kP7hg">
+<div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+  Visiting Specialist
 </div>
-<div class="p-5 flex-1 flex flex-col text-center">
+</div>
+<div class="p-4 sm:p-5 flex-1 flex flex-col text-center">
 <h3 class="text-base font-extrabold text-slate-900">Dr. N. K. Singh</h3>
 <span class="text-xs font-bold text-brand-teal block mt-1">Anaesthesiology &amp; Critical Care</span>
 <p class="text-[11px] text-slate-500 mt-0.5">Head of Level-3 Telemetry ICU</p>
 <p class="text-[10px] text-slate-400 font-medium mt-1">MBBS, MD (Anaesthesiology &amp; Resuscitation)</p>
 <div class="mt-auto pt-4 flex items-center justify-center gap-2">
-<a class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs" href="tel:+919759008704">
+<a class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-teal hover:border-brand-teal text-xs active:scale-95" href="tel:+919759008704" aria-label="Call Dr. Singh">
 <i class="fa-solid fa-phone"></i>
 </a>
-<a class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors" href="#book-appointment">
-                View Profile
-              </a>
+<a class="px-4 py-2 rounded-full bg-brand-navy text-white text-xs font-bold hover:bg-brand-teal transition-colors active:scale-95" href="#book-appointment">
+  View Profile
+</a>
 </div>
 </div>
 </div>
@@ -552,110 +722,110 @@
 </section>
 <!-- END: DoctorsSection -->
 <!-- BEGIN: WhyChooseSection -->
-<section class="py-20 bg-slate-50 border-t border-slate-200/60" data-purpose="hospital-pillars" id="why-choose">
+<section class="py-12 sm:py-20 bg-slate-50 border-t border-slate-200/60" data-purpose="hospital-pillars" id="why-choose">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center space-y-3 mb-12">
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Why Choose Dr. Himanshu Hospital, Etah?
-        </h2>
-<p class="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto">
-          We offer an integrated range of services to ensure you get the safest surgical interventions and compassionate post-operative recovery.
-        </p>
+<div class="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+  Why Choose Dr. Himanshu Hospital, Etah?
+</h2>
+<p class="text-slate-500 text-xs sm:text-base max-w-2xl mx-auto">
+  We offer an integrated range of services to ensure you get the safest surgical interventions and compassionate post-operative recovery.
+</p>
 </div>
-<!-- 4 Horizontal Pillars matching reference layout -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- 4 Horizontal Pillars -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 <!-- Pillar 1 -->
-<div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
-<div class="w-14 h-14 mx-auto mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-2xl transition-colors">
+<div class="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-xl sm:text-2xl transition-colors">
 <i class="fa-solid fa-certificate"></i>
 </div>
-<h3 class="text-base font-bold text-slate-900 mb-2">NABH Protocol Standards</h3>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1.5 sm:mb-2">NABH Protocol Standards</h3>
 <p class="text-xs text-slate-500 leading-relaxed">
-            Strict sterilization compliance, patient safety checklists, and accredited surgical protocol monitoring.
-          </p>
+  Strict sterilization compliance, patient safety checklists, and accredited surgical protocol monitoring.
+</p>
 </div>
 <!-- Pillar 2 -->
-<div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
-<div class="w-14 h-14 mx-auto mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-2xl transition-colors">
+<div class="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-xl sm:text-2xl transition-colors">
 <i class="fa-solid fa-x-ray"></i>
 </div>
-<h3 class="text-base font-bold text-slate-900 mb-2">Advanced Diagnostics</h3>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1.5 sm:mb-2">Advanced Diagnostics</h3>
 <p class="text-xs text-slate-500 leading-relaxed">
-            Digital X-Ray, advanced ultrasonography, comprehensive 24/7 biochemistry pathology, and rapid reporting.
-          </p>
+  Digital X-Ray, advanced ultrasonography, comprehensive 24/7 biochemistry pathology, and rapid reporting.
+</p>
 </div>
 <!-- Pillar 3 -->
-<div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
-<div class="w-14 h-14 mx-auto mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-2xl transition-colors">
+<div class="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-xl sm:text-2xl transition-colors">
 <i class="fa-solid fa-hospital"></i>
 </div>
-<h3 class="text-base font-bold text-slate-900 mb-2">Modern Infrastructure</h3>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1.5 sm:mb-2">Modern Infrastructure</h3>
 <p class="text-xs text-slate-500 leading-relaxed">
-            Laminar airflow modular OTs, multi-channel telemetry monitors, ventilator support, and sterile recovery cubicles.
-          </p>
+  Laminar airflow modular OTs, multi-channel telemetry monitors, ventilator support, and sterile recovery cubicles.
+</p>
 </div>
 <!-- Pillar 4 -->
-<div class="bg-white p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
-<div class="w-14 h-14 mx-auto mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-2xl transition-colors">
+<div class="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center group">
+<div class="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-5 rounded-full bg-cyan-50 group-hover:bg-brand-teal text-brand-teal group-hover:text-white flex items-center justify-center text-xl sm:text-2xl transition-colors">
 <i class="fa-solid fa-truck-fast"></i>
 </div>
-<h3 class="text-base font-bold text-slate-900 mb-2">24/7 Emergency &amp; Trauma</h3>
+<h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1.5 sm:mb-2">24/7 Emergency &amp; Trauma</h3>
 <p class="text-xs text-slate-500 leading-relaxed">
-            Always-on casualty doctors, fully equipped ambulance, blood bank tie-up, and emergency surgical readiness.
-          </p>
+  Always-on casualty doctors, fully equipped ambulance, blood bank tie-up, and emergency surgical readiness.
+</p>
 </div>
 </div>
 </div>
 </section>
 <!-- END: WhyChooseSection -->
 <!-- BEGIN: TestimonialsSection -->
-<section class="py-20 bg-white" data-purpose="patient-testimonials">
+<section class="py-12 sm:py-20 bg-white" data-purpose="patient-testimonials">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center space-y-2 mb-12">
+<div class="text-center space-y-2 mb-8 sm:mb-12">
 <span class="text-xs font-extrabold uppercase tracking-widest text-brand-teal">Testimonials</span>
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">What Our Patients Say</h2>
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">What Our Patients Say</h2>
 </div>
-<!-- 3 Testimonial Cards mirroring layout in reference image -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="bg-slate-50/70 p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
-<div class="text-brand-teal/20 text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
+<!-- 3 Testimonial Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+<div class="bg-slate-50/70 p-5 sm:p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
+<div class="text-brand-teal/20 text-3xl sm:text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
 <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-            "My brother had a severe facial bone fracture after a road accident. Dr. Himanshu performed reconstructive surgery with incredible precision. There are no scars, and the recovery was completely smooth. Best maxillofacial center in the entire region."
-          </p>
+  "My brother had a severe facial bone fracture after a road accident. Dr. Himanshu performed reconstructive surgery with incredible precision. There are no scars, and the recovery was completely smooth. Best maxillofacial center in the entire region."
+</p>
 <div class="flex items-center gap-3 pt-4 border-t border-slate-200/60">
-<div class="w-10 h-10 rounded-full bg-cyan-100 text-brand-teal font-bold flex items-center justify-center text-xs">
-              GK
-            </div>
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-cyan-100 text-brand-teal font-bold flex items-center justify-center text-xs">
+  GK
+</div>
 <div>
 <h4 class="text-xs font-bold text-slate-900">Gaurav Kashyap</h4>
 <span class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-xs text-rose-400"></i> Etah</span>
 </div>
 </div>
 </div>
-<div class="bg-slate-50/70 p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
-<div class="text-brand-teal/20 text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
+<div class="bg-slate-50/70 p-5 sm:p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
+<div class="text-brand-teal/20 text-3xl sm:text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
 <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-            "We were admitted under the Ayushman Bharat card for my mother's surgery. We were treated with absolute dignity and zero charges were asked. The nursing staff and doctor guidance were extraordinary. Truly a blessing for common citizens."
-          </p>
+  "We were admitted under the Ayushman Bharat card for my mother's surgery. We were treated with absolute dignity and zero charges were asked. The nursing staff and doctor guidance were extraordinary. Truly a blessing for common citizens."
+</p>
 <div class="flex items-center gap-3 pt-4 border-t border-slate-200/60">
-<div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">
-              AS
-            </div>
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">
+  AS
+</div>
 <div>
 <h4 class="text-xs font-bold text-slate-900">Anuj Shakya</h4>
 <span class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-xs text-rose-400"></i> Etah</span>
 </div>
 </div>
 </div>
-<div class="bg-slate-50/70 p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
-<div class="text-brand-teal/20 text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
+<div class="bg-slate-50/70 p-5 sm:p-6 rounded-2xl border border-slate-100 flex flex-col justify-between relative shadow-sm">
+<div class="text-brand-teal/20 text-3xl sm:text-4xl font-serif absolute top-4 right-5"><i class="fa-solid fa-quote-right"></i></div>
 <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-            "I had a great experience in their ICU and inpatient wing. The medical hygiene is comparable to top metropolitan hospitals in Delhi or Agra. The staff is polite, available round the clock, and the overall process was prompt."
-          </p>
+  "I had a great experience in their ICU and inpatient wing. The medical hygiene is comparable to top metropolitan hospitals in Delhi or Agra. The staff is polite, available round the clock, and the overall process was prompt."
+</p>
 <div class="flex items-center gap-3 pt-4 border-t border-slate-200/60">
-<div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-xs">
-              CG
-            </div>
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-xs">
+  CG
+</div>
 <div>
 <h4 class="text-xs font-bold text-slate-900">Chitransh Gupta</h4>
 <span class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot text-xs text-rose-400"></i> Etah</span>
@@ -667,83 +837,83 @@
 </section>
 <!-- END: TestimonialsSection -->
 <!-- BEGIN: FAQSection -->
-<section class="py-20 bg-slate-50 border-t border-slate-200/60" data-purpose="frequently-asked-questions" id="faq">
+<section class="py-12 sm:py-20 bg-slate-50 border-t border-slate-200/60" data-purpose="frequently-asked-questions" id="faq">
 <div class="max-w-4xl mx-auto px-4 sm:px-6">
-<div class="text-center space-y-2 mb-10">
+<div class="text-center space-y-2 mb-8 sm:mb-10">
 <span class="text-xs font-extrabold uppercase tracking-widest text-brand-teal">Questions &amp; Answers</span>
-<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
 <p class="text-slate-500 text-xs sm:text-sm">Find answers to common queries regarding hospital visits, billing, and admissions.</p>
 </div>
-<!-- FAQ Accordion List with semantic HTML details tags -->
+<!-- FAQ Accordion List -->
 <div class="space-y-3">
-<details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200" open="">
-<summary class="flex justify-between items-center cursor-pointer font-bold text-sm text-slate-800 list-none">
-<span class="">What are Dr. Himanshu Hospital's OPD and emergency hours?</span>
-<span class="text-brand-teal group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+<details class="group bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 transition-all duration-200" open="">
+<summary class="flex justify-between items-center cursor-pointer font-bold text-xs sm:text-sm text-slate-800 list-none select-none">
+<span>What are Dr. Himanshu Hospital's OPD and emergency hours?</span>
+<span class="text-brand-teal group-open:rotate-180 transition-transform flex-shrink-0 ml-2"><i class="fa-solid fa-chevron-down text-xs"></i></span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Our Outpatient Department (OPD) operates from <strong>9:00 AM to 8:00 PM</strong> Monday through Saturday. The Casualty, Emergency, Trauma care, and Intensive Care Units are open <strong>24 Hours a Day, 365 Days a Year</strong>.
-          </p>
+<p class="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
+  Our Outpatient Department (OPD) operates from <strong>9:00 AM to 8:00 PM</strong> Monday through Saturday. The Casualty, Emergency, Trauma care, and Intensive Care Units are open <strong>24 Hours a Day, 365 Days a Year</strong>.
+</p>
 </details>
-<details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200">
-<summary class="flex justify-between items-center cursor-pointer font-bold text-sm text-slate-800 list-none">
-<span class="">Do you accept Ayushman Bharat PM-JAY Golden Card?</span>
-<span class="text-brand-teal group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+<details class="group bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 transition-all duration-200">
+<summary class="flex justify-between items-center cursor-pointer font-bold text-xs sm:text-sm text-slate-800 list-none select-none">
+<span>Do you accept Ayushman Bharat PM-JAY Golden Card?</span>
+<span class="text-brand-teal group-open:rotate-180 transition-transform flex-shrink-0 ml-2"><i class="fa-solid fa-chevron-down text-xs"></i></span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Yes, Dr. Himanshu Hospital is an active empanelled hospital under <strong>Ayushman Bharat PM-JAY</strong>. Eligible cardholders receive 100% cashless treatment across covered medical and surgical procedures. Please present your Ayushman Golden Card and Aadhaar card at our help desk.
-          </p>
+<p class="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
+  Yes, Dr. Himanshu Hospital is an active empanelled hospital under <strong>Ayushman Bharat PM-JAY</strong>. Eligible cardholders receive 100% cashless treatment across covered medical and surgical procedures. Please present your Ayushman Golden Card and Aadhaar card at our help desk.
+</p>
 </details>
-<details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200">
-<summary class="flex justify-between items-center cursor-pointer font-bold text-sm text-slate-800 list-none">
-<span class="">How can I book an appointment with Dr. Himanshu?</span>
-<span class="text-brand-teal group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+<details class="group bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 transition-all duration-200">
+<summary class="flex justify-between items-center cursor-pointer font-bold text-xs sm:text-sm text-slate-800 list-none select-none">
+<span>How can I book an appointment with Dr. Himanshu?</span>
+<span class="text-brand-teal group-open:rotate-180 transition-transform flex-shrink-0 ml-2"><i class="fa-solid fa-chevron-down text-xs"></i></span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
-            You can book an appointment instantly using the booking form below, or by calling our direct registration desk at <strong>+91 97590 08704</strong>, or via our 24/7 WhatsApp concierge.
-          </p>
+<p class="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
+  You can book an appointment instantly using the booking form below, or by calling our direct registration desk at <strong>+91 97590 08704</strong>, or via our 24/7 WhatsApp concierge.
+</p>
 </details>
-<details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200">
-<summary class="flex justify-between items-center cursor-pointer font-bold text-sm text-slate-800 list-none">
-<span class="">What facilities are available for trauma and fracture cases?</span>
-<span class="text-brand-teal group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+<details class="group bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 transition-all duration-200">
+<summary class="flex justify-between items-center cursor-pointer font-bold text-xs sm:text-sm text-slate-800 list-none select-none">
+<span>What facilities are available for trauma and fracture cases?</span>
+<span class="text-brand-teal group-open:rotate-180 transition-transform flex-shrink-0 ml-2"><i class="fa-solid fa-chevron-down text-xs"></i></span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
-            We feature a dedicated trauma bay, high-resolution digital X-ray, specialized maxillofacial plating systems, orthopedic C-arm image intensifiers, and immediate blood cross-matching protocols.
-          </p>
+<p class="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
+  We feature a dedicated trauma bay, high-resolution digital X-ray, specialized maxillofacial plating systems, orthopedic C-arm image intensifiers, and immediate blood cross-matching protocols.
+</p>
 </details>
-<details class="group bg-white rounded-xl border border-slate-200 p-4 transition-all duration-200">
-<summary class="flex justify-between items-center cursor-pointer font-bold text-sm text-slate-800 list-none">
-<span class="">Are private and deluxe air-conditioned inpatient rooms available?</span>
-<span class="text-brand-teal group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down text-xs"></i></span>
+<details class="group bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 transition-all duration-200">
+<summary class="flex justify-between items-center cursor-pointer font-bold text-xs sm:text-sm text-slate-800 list-none select-none">
+<span>Are private and deluxe air-conditioned inpatient rooms available?</span>
+<span class="text-brand-teal group-open:rotate-180 transition-transform flex-shrink-0 ml-2"><i class="fa-solid fa-chevron-down text-xs"></i></span>
 </summary>
-<p class="mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Yes, we provide General Wards, Semi-Private Rooms, and Fully Furnished Deluxe AC Rooms with attendant sleeper facilities, television, and customized dietary meal plans.
-          </p>
+<p class="mt-2.5 sm:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed">
+  Yes, we provide General Wards, Semi-Private Rooms, and Fully Furnished Deluxe AC Rooms with attendant sleeper facilities, television, and customized dietary meal plans.
+</p>
 </details>
 </div>
 </div>
 </section>
 <!-- END: FAQSection -->
 <!-- BEGIN: BookingSection -->
-<section class="py-20 bg-white" data-purpose="appointment-booking-form" id="book-appointment">
-<div class="max-w-3xl mx-auto px-4 sm:px-6">
-<!-- Card Container matching the clean form card in reference snapshot -->
-<div class="bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 sm:p-10">
-<div class="text-center space-y-2 mb-8">
+<section class="py-12 sm:py-20 bg-white" data-purpose="appointment-booking-form" id="book-appointment">
+<div class="max-w-3xl mx-auto px-3 sm:px-6">
+<!-- Card Container with responsive padding -->
+<div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-slate-100 p-5 sm:p-8 md:p-10">
+<div class="text-center space-y-2 mb-6 sm:mb-8">
 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Book an Appointment</h2>
 <p class="text-slate-500 text-xs sm:text-sm">Select a doctor, choose an available time, and fill out your details.</p>
 </div>
 <form class="space-y-4" data-purpose="registration-form" onsubmit="event.preventDefault(); alert('Thank you! Your appointment request has been submitted. Our hospital desk will contact you via phone or WhatsApp shortly.');">
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<!-- Doctor Selection Dropdown -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+<!-- Doctor Selection Dropdown (16px base font on mobile to prevent iPhone Safari zoom) -->
 <div>
 <label class="block text-xs font-bold text-slate-700 mb-1">Select Doctor / Department *</label>
 <div class="relative">
 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
 <i class="fa-solid fa-user-doctor text-xs"></i>
 </span>
-<select class="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" required="">
+<select class="w-full pl-9 pr-8 py-2.5 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" required="">
 <option value="">Select Doctor / Department</option>
 <option value="dr-himanshu">Dr. Himanshu (Maxillofacial &amp; Trauma)</option>
 <option value="dr-sharma">Dr. R. K. Sharma (Neuro Surgery)</option>
@@ -761,11 +931,11 @@
 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
 <i class="fa-solid fa-user text-xs"></i>
 </span>
-<input class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="Your Name" required="" type="text">
+<input autocomplete="name" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="Your Name" required="" type="text">
 </div>
 </div>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 <!-- Phone Number -->
 <div>
 <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number *</label>
@@ -773,7 +943,7 @@
 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
 <i class="fa-solid fa-phone text-xs"></i>
 </span>
-<input class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="10 Digit Mobile Number" required="" type="tel">
+<input autocomplete="tel" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="10 Digit Mobile Number" required="" type="tel">
 </div>
 </div>
 <!-- Email Address -->
@@ -783,7 +953,7 @@
 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
 <i class="fa-solid fa-envelope text-xs"></i>
 </span>
-<input class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="name@domain.com" type="email">
+<input autocomplete="email" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="name@domain.com" type="email">
 </div>
 </div>
 </div>
@@ -794,14 +964,14 @@
 <span class="absolute top-3 left-3 text-slate-400">
 <i class="fa-regular fa-comment-dots text-xs"></i>
 </span>
-<textarea class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="Briefly specify medical problem or required surgery..." rows="3"></textarea>
+<textarea class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs font-medium text-slate-800 focus:ring-2 focus:ring-brand-teal focus:border-brand-teal" placeholder="Briefly specify medical problem or required surgery..." rows="3"></textarea>
 </div>
 </div>
 <!-- Submit Button -->
 <div class="pt-2">
-<button class="w-full sm:w-auto px-8 py-3 bg-brand-navy hover:bg-brand-teal text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-md transition-colors duration-200" type="submit">
-              Confirm Appointment
-            </button>
+<button class="w-full sm:w-auto px-8 py-3.5 sm:py-3 bg-brand-navy hover:bg-brand-teal text-white rounded-xl sm:rounded-lg text-xs font-bold uppercase tracking-wider shadow-md transition-colors duration-200 active:scale-95" type="submit">
+  Confirm Appointment
+</button>
 </div>
 </form>
 </div>
@@ -809,70 +979,70 @@
 </section>
 <!-- END: BookingSection -->
 <!-- BEGIN: CtaBanner -->
-<section class="bg-gradient-to-r from-brand-tealDark via-brand-teal to-brand-cyan text-white py-14 text-center" data-purpose="ready-banner">
-<div class="max-w-4xl mx-auto px-4 space-y-4">
-<h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to get the best care?</h2>
-<p class="text-slate-100 text-sm sm:text-base max-w-xl mx-auto">
-        Schedule your consultation today and take the first step towards better health and recovery.
-      </p>
+<section class="bg-gradient-to-r from-brand-tealDark via-brand-teal to-brand-cyan text-white py-10 sm:py-14 text-center" data-purpose="ready-banner">
+<div class="max-w-4xl mx-auto px-4 space-y-3 sm:space-y-4">
+<h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">Ready to get the best care?</h2>
+<p class="text-slate-100 text-xs sm:text-base max-w-xl mx-auto">
+  Schedule your consultation today and take the first step towards better health and recovery.
+</p>
 <div class="pt-2">
-<a class="inline-block bg-white text-brand-teal font-extrabold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg hover:bg-slate-50 transition-transform transform hover:scale-105" href="#book-appointment">
-          Book Appointment
-        </a>
+<a class="inline-block bg-white text-brand-teal font-extrabold text-xs uppercase tracking-wider px-7 sm:px-8 py-3 sm:py-3.5 rounded-full shadow-lg hover:bg-slate-50 transition-transform transform hover:scale-105 active:scale-95" href="#book-appointment">
+  Book Appointment
+</a>
 </div>
 </div>
 </section>
 <!-- END: CtaBanner -->
 <!-- BEGIN: Footer -->
-<footer class="bg-brand-navyDark text-slate-300 pt-16 pb-12 border-t border-slate-800 text-xs" data-purpose="main-footer" id="contact">
+<footer class="bg-brand-navyDark text-slate-300 pt-12 sm:pt-16 pb-8 sm:pb-12 border-t border-slate-800 text-xs" data-purpose="main-footer" id="contact">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
 <!-- Col 1: Brand & Bio -->
 <div class="lg:col-span-4 space-y-4">
 <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 w-fit">
-<img alt="Dr. Himanshu Hospital" class="h-12 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZuamDg8OSL0CWqNfi9s3FCFz5hQ2MLHXraKlp14axaNR-ymuRvx3ltUYF9gNoEhU_mieDDb1GGLprMuVELuc6HMVN3n5YPCTH2enlRaUGxoQEBqIkO57uy_Pzz2oxaFENaQ-0TACpPxpBnE6fbG0w-CmF7paMyELJUNckPsnq7SCTf9mEW9C2WxYKTmZ-a1nuLcI890MuqQcwTRnbcq_m7tpsTR22WZnYi-JJAoRD44bqunrtipK0T1gHPQa3jymRAFc">
+<img alt="Dr. Himanshu Hospital" class="h-10 sm:h-12 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZuamDg8OSL0CWqNfi9s3FCFz5hQ2MLHXraKlp14axaNR-ymuRvx3ltUYF9gNoEhU_mieDDb1GGLprMuVELuc6HMVN3n5YPCTH2enlRaUGxoQEBqIkO57uy_Pzz2oxaFENaQ-0TACpPxpBnE6fbG0w-CmF7paMyELJUNckPsnq7SCTf9mEW9C2WxYKTmZ-a1nuLcI890MuqQcwTRnbcq_m7tpsTR22WZnYi-JJAoRD44bqunrtipK0T1gHPQa3jymRAFc">
 <div>
 <span class="block font-extrabold text-white text-sm tracking-wide">DR. HIMANSHU</span>
 <span class="block text-brand-teal font-bold text-xs uppercase tracking-wider">HOSPITAL</span>
 </div>
 </div>
 <p class="text-slate-400 leading-relaxed text-xs pr-4">
-            Dr. Himanshu Hospital in Etah provides advanced multispecialty care, surgical excellence, and round-the-clock emergency support with NABH-standard clinical safety.
-          </p>
+  Dr. Himanshu Hospital in Etah provides advanced multispecialty care, surgical excellence, and round-the-clock emergency support with NABH-standard clinical safety.
+</p>
 <div class="flex items-center gap-3 pt-2">
-<a class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-facebook-f text-xs"></i></a>
-<a class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-instagram text-xs"></i></a>
-<a class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="https://wa.me/919759008704"><i class="fa-brands fa-whatsapp text-xs"></i></a>
-<a class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-youtube text-xs"></i></a>
+<a aria-label="Facebook" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+<a aria-label="Instagram" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-instagram text-xs"></i></a>
+<a aria-label="WhatsApp" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="https://wa.me/919759008704"><i class="fa-brands fa-whatsapp text-xs"></i></a>
+<a aria-label="YouTube" class="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-teal flex items-center justify-center text-white transition-colors" href="#"><i class="fa-brands fa-youtube text-xs"></i></a>
 </div>
 <div class="pt-2">
 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-[11px] font-semibold">
 <i class="fa-solid fa-shield-halved"></i> NABH Protocol Standard Certified
-            </span>
+</span>
 </div>
 </div>
 <!-- Col 2: Quick Links -->
 <div class="lg:col-span-2 space-y-3">
 <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700/60 pb-2">Quick Links</h4>
 <ul class="space-y-2 text-slate-400">
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#home">Home</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#about">About Hospital</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Medical Departments</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#doctors">Our Specialists</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#ayushman">Ayushman PM-JAY</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#faq">Patient FAQs</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#home">Home</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#about">About Hospital</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Medical Departments</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#doctors">Our Specialists</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#ayushman">Ayushman PM-JAY</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#faq">Patient FAQs</a></li>
 </ul>
 </div>
 <!-- Col 3: Core Specialities -->
 <div class="lg:col-span-3 space-y-3">
 <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700/60 pb-2">Key Specialties</h4>
 <ul class="space-y-2 text-slate-400">
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Oral &amp; Maxillofacial Surgery</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Neuro &amp; Spine Trauma</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Surgical Oncology (Cancer)</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Gynaecology &amp; Obstetric Care</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Modular OT &amp; Laparoscopy</a></li>
-<li class=""><a class="hover:text-cyan-400 transition-colors" href="#specialities">Telemetry ICU &amp; Ventilator</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Oral &amp; Maxillofacial Surgery</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Neuro &amp; Spine Trauma</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Surgical Oncology (Cancer)</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Gynaecology &amp; Obstetric Care</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Modular OT &amp; Laparoscopy</a></li>
+<li><a class="hover:text-cyan-400 transition-colors py-0.5 inline-block" href="#specialities">Telemetry ICU &amp; Ventilator</a></li>
 </ul>
 </div>
 <!-- Col 4: Contact & Hospital Address -->
@@ -881,12 +1051,12 @@
 <ul class="space-y-3 text-slate-400">
 <li class="flex items-start gap-2.5">
 <i class="fa-solid fa-location-dot text-rose-400 mt-1 flex-shrink-0"></i>
-<span class="">96, Dr. Himanshu Hospital, Aruna Nagar, ETAH (U.P) - 207001</span>
+<span>96, Dr. Himanshu Hospital, Aruna Nagar, ETAH (U.P) - 207001</span>
 </li>
 <li class="flex items-center gap-2.5">
 <i class="fa-solid fa-phone text-cyan-400 flex-shrink-0"></i>
 <div>
-<span class="block text-white font-semibold">Emergency: +91 97590 08704</span>
+<a href="tel:+919759008704" class="block text-white font-semibold hover:underline">Emergency: +91 97590 08704</a>
 <span class="text-[11px] text-slate-500">24/7 Trauma Desk</span>
 </div>
 </li>
@@ -905,13 +1075,13 @@
 </div>
 </div>
 <!-- Bottom Copyright Line -->
-<div class="mt-12 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-slate-500 text-[11px]">
-<p class="">© 2025 Dr. Himanshu Hospital. All Rights Reserved.</p>
-<p class="flex items-center gap-3">
+<div class="mt-8 sm:mt-12 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-slate-500 text-[11px] text-center sm:text-left">
+<p>© 2025 Dr. Himanshu Hospital. All Rights Reserved.</p>
+<p class="flex items-center justify-center gap-3">
 <a class="hover:text-slate-300" href="#">Privacy Policy</a>
-<span class="">•</span>
+<span>•</span>
 <a class="hover:text-slate-300" href="#">Terms of Care</a>
-<span class="">•</span>
+<span>•</span>
 <a class="hover:text-slate-300" href="#">NABH Guidelines</a>
 </p>
 </div>
@@ -919,5 +1089,74 @@
 </footer>
 <!-- END: Footer -->
 
+<!-- Mobile Navigation & Doctor Filter Scripts -->
+<script>
+  // Mobile Off-Canvas Drawer Logic
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileDrawer = document.getElementById('mobile-drawer');
+  const mobileBackdrop = document.getElementById('mobile-drawer-backdrop');
+  const mobileCloseBtn = document.getElementById('mobile-drawer-close');
+  const drawerLinks = document.querySelectorAll('.drawer-link');
+
+  function openDrawer() {
+    mobileDrawer.classList.remove('translate-x-full');
+    mobileBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+    mobileBackdrop.classList.add('opacity-100');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    mobileDrawer.classList.add('translate-x-full');
+    mobileBackdrop.classList.remove('opacity-100');
+    mobileBackdrop.classList.add('opacity-0', 'pointer-events-none');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openDrawer);
+  if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', closeDrawer);
+  if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeDrawer);
+
+  drawerLinks.forEach(link => {
+    link.addEventListener('click', closeDrawer);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  // Doctor Filter Logic
+  function filterDoctors(category) {
+    const coreBtn = document.getElementById('tab-core');
+    const visitingBtn = document.getElementById('tab-visiting');
+    const cards = document.querySelectorAll('.doctor-card');
+
+    if (category === 'core') {
+      coreBtn.className = 'px-4 sm:px-5 py-2 text-xs font-bold rounded-full bg-brand-navy text-white shadow-sm transition-all';
+      visitingBtn.className = 'px-4 sm:px-5 py-2 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition-all';
+      cards.forEach(card => {
+        if (card.getAttribute('data-doc-type') === 'core') {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    } else {
+      visitingBtn.className = 'px-4 sm:px-5 py-2 text-xs font-bold rounded-full bg-brand-navy text-white shadow-sm transition-all';
+      coreBtn.className = 'px-4 sm:px-5 py-2 text-xs font-bold rounded-full text-slate-600 hover:text-slate-900 transition-all';
+      cards.forEach(card => {
+        if (card.getAttribute('data-doc-type') === 'visiting') {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  // Initialize doctor filter to show Core faculty by default or all
+  document.addEventListener('DOMContentLoaded', () => {
+    filterDoctors('core');
+  });
+</script>
 
 </body></html>
